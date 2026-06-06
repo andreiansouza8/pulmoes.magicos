@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aventura dos Pulmões Mágicos 🫁✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sky:#6DD5FA;--sky2:#2980B9;--mint:#43E97B;--sun:#F9D423;
+  --coral:#FF6B6B;--purple:#A855F7;--pink:#EC4899;
+  --dark:#1e1b4b;--card:rgba(255,255,255,0.92);
+  --shadow:0 8px 32px rgba(30,27,75,0.13);--radius:24px;
+  --font-head:'Fredoka One',cursive;--font-body:'Nunito',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:linear-gradient(135deg,#e0f7fa 0%,#e8f5e9 40%,#fff9c4 100%);min-height:100vh;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:linear-gradient(90deg,var(--sky2),var(--purple));display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:60px;box-shadow:0 4px 20px rgba(0,0,0,0.18)}
+nav .logo{font-family:var(--font-head);color:white;font-size:1.3rem;display:flex;align-items:center;gap:8px}
+nav .nav-links{display:flex;gap:6px;flex-wrap:wrap}
+nav .nav-links button{background:rgba(255,255,255,0.18);color:white;border:none;border-radius:20px;padding:6px 13px;font-family:var(--font-body);font-size:0.8rem;font-weight:700;cursor:pointer;transition:all .2s}
+nav .nav-links button:hover,nav .nav-links button.active{background:white;color:var(--purple)}
+.progress-bar-wrap{position:fixed;top:60px;left:0;right:0;z-index:999;background:rgba(255,255,255,0.7);height:8px}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--mint),var(--sun));transition:width 0.5s ease;border-radius:0 4px 4px 0}
+
+.page{display:none;min-height:100vh;padding:80px 20px 40px;max-width:900px;margin:0 auto}
+.page.active{display:block;animation:fadeInUp 0.5s ease}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:20px}
+.card-title{font-family:var(--font-head);font-size:1.7rem;color:var(--dark);margin-bottom:12px}
+.card-sub{font-size:1rem;color:#555;line-height:1.7}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:50px;border:none;cursor:pointer;font-family:var(--font-body);font-weight:800;font-size:1rem;transition:all .2s;box-shadow:0 4px 15px rgba(0,0,0,0.15)}
+.btn-primary{background:linear-gradient(135deg,var(--mint),var(--sky));color:white}
+.btn-primary:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 8px 24px rgba(67,233,123,0.4)}
+.btn-purple{background:linear-gradient(135deg,var(--purple),var(--pink));color:white}
+.btn-coral{background:linear-gradient(135deg,var(--coral),var(--sun));color:white}
+.btn-dark{background:var(--dark);color:white}
+.btn:active{transform:scale(0.97)}
+
+.next-bar{display:flex;justify-content:center;align-items:center;margin:28px 0 10px;gap:14px;flex-wrap:wrap}
+.btn-next{background:linear-gradient(135deg,var(--purple),var(--pink));color:white;font-size:1.1rem;padding:16px 36px}
+.btn-next:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 8px 24px rgba(168,85,247,0.4)}
+
+.hero{text-align:center;padding:20px 0}
+.hero h1{font-family:var(--font-head);font-size:3rem;color:var(--dark);line-height:1.1;margin-bottom:16px}
+.hero h1 span{color:var(--purple)}
+.hero p{font-size:1.15rem;color:#444;max-width:600px;margin:0 auto 28px;line-height:1.8}
+.mascot{font-size:8rem;display:block;animation:float 3s ease-in-out infinite;margin-bottom:10px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+.star-bg{position:relative}
+.star-bg::before{content:'✨🌟⭐✨🌟⭐✨';position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:1.4rem;letter-spacing:8px;opacity:0.6}
+
+.avatar-section{text-align:center}
+.avatar-display{font-size:5rem;margin:20px 0;display:flex;align-items:center;justify-content:center;gap:10px}
+.avatar-options{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:12px 0}
+.avatar-options button{background:white;border:3px solid #e0e0e0;border-radius:14px;padding:10px 16px;cursor:pointer;font-size:1.4rem;transition:all .2s}
+.avatar-options button:hover,.avatar-options button.sel{border-color:var(--purple);transform:scale(1.15);box-shadow:0 4px 12px rgba(168,85,247,0.3)}
+.option-label{font-weight:700;font-size:0.85rem;color:#666;margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px}
+
+.clickable-zones{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:16px}
+.zone-btn{background:white;border:3px solid var(--sky);border-radius:50px;padding:10px 22px;cursor:pointer;font-family:var(--font-body);font-weight:700;font-size:0.95rem;color:var(--dark);transition:all .2s;display:flex;align-items:center;gap:8px}
+.zone-btn:hover{background:var(--sky);color:white;transform:scale(1.05)}
+.fact-box{background:linear-gradient(135deg,#e0f7fa,#e8f5e9);border-radius:18px;padding:20px;margin-top:10px;font-size:1rem;line-height:1.7;border-left:5px solid var(--mint);display:none}
+.fact-box.visible{display:block;animation:fadeInUp .3s ease}
+.fact-box .emoji{font-size:2rem;float:left;margin-right:14px}
+
+/* ---- MUCO GAME ---- */
+#mucoArea{position:relative;width:100%;height:360px;background:linear-gradient(135deg,#e8f5e9,#e3f2fd);border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:var(--shadow)}
+.muco-ball{position:absolute;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.4rem;transition:transform .1s;user-select:none;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+.muco-ball:hover{transform:scale(1.15)}
+.muco-ball:active{transform:scale(0.9)}
+.game-hud{display:flex;justify-content:space-between;align-items:center;background:var(--dark);color:white;border-radius:14px;padding:10px 20px;margin-bottom:10px;font-weight:700;font-size:1rem}
+.game-hud span{display:flex;align-items:center;gap:6px}
+#gameMsg{display:none;text-align:center;margin-top:16px}
+.game-controls{display:flex;gap:12px;justify-content:center;margin:16px 0;flex-wrap:wrap}
+.manual-box{background:linear-gradient(135deg,#e3f2fd,#e8f5e9);border-radius:18px;padding:20px 24px;margin-bottom:16px;border-left:5px solid var(--sky)}
+.manual-box p{font-size:0.95rem;color:#444;line-height:1.7;margin-bottom:8px}
+.manual-box p:last-child{margin-bottom:0}
+
+/* ---- PHYSIO ---- */
+.physio-steps{display:grid;gap:16px;margin-top:16px}
+.physio-step{background:white;border-radius:18px;padding:20px 24px;display:flex;align-items:flex-start;gap:16px;box-shadow:0 4px 16px rgba(0,0,0,0.07);border-left:5px solid var(--mint);transition:transform .2s}
+.physio-step:hover{transform:translateX(6px)}
+.physio-step .step-icon{font-size:2.5rem;flex-shrink:0}
+.physio-step h3{font-family:var(--font-head);font-size:1.2rem;color:var(--dark);margin-bottom:6px}
+.physio-step p{font-size:0.95rem;color:#555;line-height:1.6}
+.breathing-anim{width:120px;height:120px;border-radius:50%;margin:20px auto;background:radial-gradient(circle,var(--mint) 0%,var(--sky) 100%);display:flex;align-items:center;justify-content:center;font-size:3rem;animation:breathe 6s ease-in-out infinite;box-shadow:0 0 40px rgba(67,233,123,0.5);cursor:pointer}
+@keyframes breathe{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(67,233,123,0.5)}50%{transform:scale(1.35);box-shadow:0 0 70px rgba(67,233,123,0.8)}}
+.breathe-label{text-align:center;font-weight:700;color:var(--dark);font-size:0.95rem;margin-top:8px}
+
+/* ---- NUTRITION ---- */
+.nutrition-game{touch-action:none}
+.food-tray{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:16px 0}
+.food-item{font-size:2.2rem;background:white;border-radius:14px;padding:12px 14px;cursor:grab;box-shadow:0 4px 12px rgba(0,0,0,0.1);transition:transform .15s;user-select:none;border:3px solid transparent}
+.food-item:hover{transform:scale(1.15);border-color:var(--mint)}
+.food-item.dragging{opacity:0.5}
+.plate-drop{width:200px;height:200px;border-radius:50%;margin:20px auto;background:radial-gradient(circle,#fff8e1 60%,#ffe082 100%);border:5px dashed var(--sun);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;transition:all .2s}
+.plate-drop.drag-over{border-color:var(--mint);transform:scale(1.08);background:radial-gradient(circle,#e8f5e9 60%,#a5d6a7 100%)}
+.plate-contents{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-items:center;max-width:140px;font-size:1.6rem}
+.nutri-score{text-align:center;font-family:var(--font-head);font-size:2rem;color:var(--purple);margin-top:10px}
+
+/* ---- QUIZ ---- */
+.quiz-q{background:white;border-radius:18px;padding:24px;margin-bottom:16px;box-shadow:0 4px 16px rgba(0,0,0,0.07)}
+.quiz-q h3{font-family:var(--font-head);font-size:1.2rem;color:var(--dark);margin-bottom:14px}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-option{background:#f5f5ff;border:3px solid #e0e0e0;border-radius:50px;padding:12px 20px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.95rem;color:var(--dark);text-align:left;transition:all .2s}
+.quiz-option:hover{border-color:var(--purple);background:#f3e8ff}
+.quiz-option.correct{border-color:var(--mint);background:#e8f5e9;color:#2e7d32}
+.quiz-option.wrong{border-color:var(--coral);background:#fce4ec;color:#c62828}
+.quiz-feedback{border-radius:14px;padding:14px 18px;margin-top:10px;font-weight:700;font-size:0.95rem;display:none}
+.quiz-feedback.show{display:block;animation:pop .25s ease}
+@keyframes pop{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+.quiz-feedback.ok{background:#e8f5e9;color:#2e7d32}
+.quiz-feedback.err{background:#fce4ec;color:#c62828}
+
+/* ---- GERMS ---- */
+.germ-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.germ-card{background:white;border-radius:18px;padding:20px 16px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.07);cursor:pointer;border:3px solid transparent;transition:all .2s}
+.germ-card:hover{border-color:var(--mint);transform:translateY(-4px)}
+.germ-card.done{border-color:var(--mint);background:#e8f5e9}
+.germ-card .germ-icon{font-size:2.8rem;display:block;margin-bottom:10px}
+.germ-card p{font-size:0.88rem;font-weight:700;color:var(--dark)}
+.germ-card .shield{font-size:2rem;display:none}
+.germ-card.done .shield{display:block;animation:pop .3s ease}
+.germ-card.done .germ-icon{opacity:0.3}
+
+/* ---- ACHIEVEMENTS ---- */
+.achievements-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+.achieve-card{background:white;border-radius:18px;padding:20px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.07);border:3px solid #e0e0e0;transition:all .3s;opacity:0.55;filter:grayscale(1)}
+.achieve-card.unlocked{border-color:var(--sun);opacity:1;filter:none;animation:achieve .5s ease}
+@keyframes achieve{0%{transform:scale(0.8)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
+.achieve-card .badge{font-size:3.5rem;display:block;margin-bottom:10px}
+.achieve-card h3{font-family:var(--font-head);font-size:1.1rem;color:var(--dark);margin-bottom:6px}
+.achieve-card p{font-size:0.82rem;color:#666}
+
+/* ---- FINAL QUIZ ---- */
+.final-q{background:white;border-radius:18px;padding:22px;margin-bottom:16px;box-shadow:0 4px 16px rgba(0,0,0,0.07)}
+.final-q h3{font-family:var(--font-head);color:var(--dark);margin-bottom:12px;font-size:1.15rem}
+.final-opt{display:flex;align-items:center;gap:12px;background:#f5f5ff;border-radius:14px;padding:12px 16px;margin:6px 0;cursor:pointer;border:2px solid transparent;transition:all .2s;font-weight:600}
+.final-opt:hover{border-color:var(--purple)}
+.final-opt input{accent-color:var(--purple);width:18px;height:18px}
+.final-opt.correct{background:#e8f5e9;border-color:var(--mint);color:#2e7d32}
+.final-opt.wrong{background:#fce4ec;border-color:var(--coral);color:#c62828}
+
+/* ---- CERTIFICATE ---- */
+.certificate{background:linear-gradient(135deg,#fff9c4,#e8f5e9,#e3f2fd);border:6px double var(--sun);border-radius:24px;padding:40px 32px;text-align:center;position:relative;overflow:hidden}
+.certificate::before{content:'🌟⭐🌟⭐🌟⭐🌟⭐🌟⭐🌟';position:absolute;top:12px;left:0;right:0;font-size:1.2rem;opacity:0.5;letter-spacing:4px}
+.certificate::after{content:'🌟⭐🌟⭐🌟⭐🌟⭐🌟⭐🌟';position:absolute;bottom:12px;left:0;right:0;font-size:1.2rem;opacity:0.5;letter-spacing:4px}
+.certificate h2{font-family:var(--font-head);font-size:2.2rem;color:var(--dark);margin-bottom:8px}
+.certificate .cert-name{font-family:var(--font-head);font-size:2.4rem;color:var(--purple);margin:18px 0;padding:14px;border-bottom:4px solid var(--sun);border-top:4px solid var(--sun)}
+.certificate p{font-size:1rem;color:#555;line-height:1.7}
+.cert-seal{font-size:4rem;margin:14px 0;display:block}
+.cert-footer{font-size:0.8rem;color:#999;margin-top:20px;font-style:italic}
+
+/* ---- MISC ---- */
+.name-input-wrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0}
+.name-input{border:3px solid var(--purple);border-radius:50px;padding:10px 20px;font-family:var(--font-body);font-size:1rem;font-weight:700;color:var(--dark);outline:none;flex:1;min-width:200px}
+.name-input:focus{border-color:var(--mint);box-shadow:0 0 0 4px rgba(67,233,123,0.2)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:white;border-radius:50px;padding:14px 28px;font-weight:700;font-size:1rem;z-index:9999;transition:transform .3s ease;box-shadow:var(--shadow);pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.section-header{background:linear-gradient(135deg,var(--purple),var(--sky2));border-radius:20px;padding:24px 28px;margin-bottom:20px;color:white;display:flex;align-items:center;gap:16px}
+.section-header .s-icon{font-size:3rem}
+.section-header h1{font-family:var(--font-head);font-size:2rem}
+.section-header p{font-size:0.95rem;opacity:0.88;margin-top:4px}
+
+@media print{
+  body *{visibility:hidden}
+  #certSection,#certSection *{visibility:visible}
+  #certSection{position:absolute;left:0;top:0;width:100%}
+  .btn-primary[onclick="printCert()"]{display:none}
+}
+@media(max-width:600px){
+  nav .nav-links{display:none}
+  .hero h1{font-size:2rem}
+  .achievements-grid{grid-template-columns:1fr}
+  .germ-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">🫁 Pulmões Mágicos</div>
+  <div class="nav-links">
+    <button onclick="goTo('home')" class="active" id="nav-home">🏠 Início</button>
+    <button onclick="goTo('lungs')" id="nav-lungs">🫁 Pulmões</button>
+    <button onclick="goTo('game')" id="nav-game">🎮 Jogo</button>
+    <button onclick="goTo('physio')" id="nav-physio">💨 Fisio</button>
+    <button onclick="goTo('nutri')" id="nav-nutri">🍎 Nutrição</button>
+    <button onclick="goTo('meds')" id="nav-meds">💊 Remédios</button>
+    <button onclick="goTo('germs')" id="nav-germs">🦠 Germes</button>
+    <button onclick="goTo('achieve')" id="nav-achieve">🏆 Conquistas</button>
+    <button onclick="goTo('quiz')" id="nav-quiz">❓ Quiz Final</button>
+  </div>
+</nav>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
+
+<!-- ===== HOME ===== -->
+<div id="page-home" class="page active">
+  <div class="hero star-bg">
+    <span class="mascot">🧑‍⚕️</span>
+    <h1>Aventura dos<br><span>Pulmões Mágicos</span></h1>
+    <p>Olá, herói! A fibrose cística faz com que o muco do corpo fique mais grosso do que deveria. Por isso precisamos cuidar bem dos pulmões e da nossa saúde. Nessa aventura, você vai aprender tudo isso de forma divertida!</p>
+  </div>
+  <div class="card">
+    <div class="card-title">✏️ Crie seu herói!</div>
+    <div class="avatar-section">
+      <div class="avatar-display"><span id="avSkin">🧒</span><span id="avHair">👑</span><span id="avCloth">🦺</span></div>
+      <div class="option-label">👤 Personagem</div>
+      <div class="avatar-options" id="skinOpts">
+        <button onclick="setAv('skin',0,'🧒')" class="sel">🧒</button>
+        <button onclick="setAv('skin',1,'👦')">👦</button>
+        <button onclick="setAv('skin',2,'👧')">👧</button>
+        <button onclick="setAv('skin',3,'🧑')">🧑</button>
+        <button onclick="setAv('skin',4,'👩')">👩</button>
+      </div>
+      <div class="option-label">💈 Acessório</div>
+      <div class="avatar-options" id="hairOpts">
+        <button onclick="setAv('hair',0,'👑')" class="sel">👑</button>
+        <button onclick="setAv('hair',1,'🎓')">🎓</button>
+        <button onclick="setAv('hair',2,'⛑️')">⛑️</button>
+        <button onclick="setAv('hair',3,'🎩')">🎩</button>
+        <button onclick="setAv('hair',4,'🪖')">🪖</button>
+      </div>
+      <div class="option-label">👕 Roupa</div>
+      <div class="avatar-options" id="clothOpts">
+        <button onclick="setAv('cloth',0,'🦺')" class="sel">🦺</button>
+        <button onclick="setAv('cloth',1,'🥼')">🥼</button>
+        <button onclick="setAv('cloth',2,'👕')">👕</button>
+        <button onclick="setAv('cloth',3,'🧥')">🧥</button>
+        <button onclick="setAv('cloth',4,'👗')">👗</button>
+      </div>
+      <div class="name-input-wrap" style="margin-top:16px;justify-content:center;">
+        <input type="text" class="name-input" id="heroName" placeholder="Qual é o seu nome?" maxlength="30">
+      </div>
+    </div>
+  </div>
+  <div class="next-bar">
+    <button class="btn btn-primary" onclick="startAdventure()" style="font-size:1.2rem;padding:18px 40px;">🚀 Começar a Aventura!</button>
+  </div>
+</div>
+
+<!-- ===== LUNGS ===== -->
+<div id="page-lungs" class="page">
+  <div class="section-header">
+    <span class="s-icon">🫁</span>
+    <div><h1>Conhecendo os Pulmões</h1><p>Clique em cada parte para descobrir curiosidades incríveis!</p></div>
+  </div>
+  <div class="card">
+    <div class="clickable-zones">
+      <button class="zone-btn" onclick="showFact('lung')">🫁 Pulmões</button>
+      <button class="zone-btn" onclick="showFact('muco')">💧 Muco</button>
+      <button class="zone-btn" onclick="showFact('bronquio')">🌿 Brônquios</button>
+      <button class="zone-btn" onclick="showFact('oxigenio')">💨 Oxigênio</button>
+      <button class="zone-btn" onclick="showFact('fc')">⚠️ Fibrose Cística</button>
+      <button class="zone-btn" onclick="showFact('cuidar')">💚 Como Cuidar</button>
+    </div>
+    <div id="factBox" class="fact-box"></div>
+  </div>
+  <div class="card" style="text-align:center;">
+    <div class="card-title">🎮 Veja os pulmões respirando!</div>
+    <div style="font-size:6rem;margin:10px 0;animation:breathe 6s ease-in-out infinite;display:inline-block;">🫁</div>
+    <p class="card-sub" style="margin-top:12px;">Os pulmões se expandem quando você inspira e voltam quando você expira. Eles são incríveis!</p>
+  </div>
+  <div class="next-bar">
+    <button class="btn btn-next" onclick="goTo('game'); unlockAchieve('lungs')">🎮 Próxima Etapa: Missão Limpar os Pulmões →</button>
+  </div>
+</div>
+
+<!-- ===== MUCO GAME ===== -->
+<div id="page-game" class="page">
+  <div class="section-header">
+    <span class="s-icon">🫁</span>
+    <div><h1>Missão: Limpar os Pulmões!</h1><p>Clique nas bolinhas de muco e limpe os pulmões antes que o tempo acabe!</p></div>
+  </div>
+  <div class="manual-box">
+    <p>📖 <strong>Como jogar:</strong></p>
+    <p>Como você já aprendeu, na fibrose cística o muco pode se acumular nos pulmões e dificultar a respiração.</p>
+    <p>Neste jogo, sua missão é remover o máximo de muco possível em 25 segundos.</p>
+    <p>Para isso, clique rapidamente nas bolinhas de muco que aparecem na tela antes que o tempo acabe!</p>
+  </div>
+  <div class="game-hud">
+    <span>🫁 Pontos: <b id="mucoScore">0</b></span>
+    <span>🔥 Combo: <b id="mucoCombo">x1</b></span>
+    <span>⏱️ Tempo: <b id="mucoTimer">25</b>s</span>
+  </div>
+  <div id="mucoArea"></div>
+  <div class="game-controls">
+    <button class="btn btn-primary" onclick="startMucoGame()" id="btnMucoStart">▶️ Iniciar Jogo</button>
+    <button class="btn btn-dark" onclick="resetMucoGame()">🔄 Reiniciar</button>
+  </div>
+  <div id="gameMsg" class="card"></div>
+  <div class="next-bar">
+    <button class="btn btn-next" onclick="goTo('physio')">💨 Próxima Etapa: Fisioterapia →</button>
+  </div>
+</div>
+
+<!-- ===== PHYSIO ===== -->
+<div id="page-physio" class="page">
+  <div class="section-header">
+    <span class="s-icon">💨</span>
+    <div><h1>Área da Fisioterapia Respiratória</h1><p>A fisioterapia é como uma equipe de limpeza que ajuda os pulmões!</p></div>
+  </div>
+  <div class="card" style="text-align:center;">
+    <div class="card-title">🫁 Pratique a Respiração!</div>
+    <p class="card-sub" style="margin-bottom:16px;">Siga o círculo: quando ele cresce, inspire. Quando ele diminui, expire.</p>
+    <div class="breathing-anim" id="breathAnim" onclick="breathFeedback()">🌬️</div>
+    <p class="breathe-label" id="breathLabel">Inspire... ↑</p>
+    <p id="breathFB" style="font-weight:700;color:var(--mint);margin-top:8px;min-height:24px;"></p>
+  </div>
+  <div class="physio-steps">
+    <div class="physio-step">
+      <span class="step-icon">🧹</span>
+      <div><h3>Higiene Brônquica</h3><p>Técnicas especiais que ajudam a soltar e eliminar o muco espesso dos brônquios. É como varrer as "sujeirinhas" que ficam paradas nos pulmões! Feita pela fisioterapeuta junto com a criança.</p></div>
+    </div>
+    <div class="physio-step" style="border-left-color:var(--sky);">
+      <span class="step-icon">💪</span>
+      <div><h3>Exercícios Respiratórios</h3><p>Respirações profundas e usar a técnica PEP (Pressão Expiratória Positiva) ajuda o ar a circular melhor nos pulmões e faz o muco sair mais facilmente!</p></div>
+    </div>
+    <div class="physio-step" style="border-left-color:var(--coral);">
+      <span class="step-icon">🏃</span>
+      <div><h3>Exercício Físico</h3><p>Correr, nadar e brincar também são formas de fisioterapia! O movimento ajuda o muco a se soltar e faz os pulmões ficarem mais fortes.</p></div>
+    </div>
+    <div class="physio-step" style="border-left-color:var(--purple);">
+      <span class="step-icon">📅</span>
+      <div><h3>Por que todo dia?</h3><p>Na fibrose cística, o muco continua se formando. Por isso a fisioterapia precisa ser feita todos os dias, igual escovar os dentes!</p></div>
+    </div>
+    <div class="physio-step" style="border-left-color:var(--sun);">
+      <span class="step-icon">🤝</span>
+      <div><h3>O Papel da Fisioterapeuta</h3><p>A fisioterapeuta é uma superparceira! Ela ensina as técnicas certas, acompanha a evolução e faz sessões personalizadas para cada criança.</p></div>
+    </div>
+  </div>
+  <div class="next-bar">
+    <button class="btn btn-next" onclick="goTo('nutri'); unlockAchieve('physio')">🍎 Próxima Etapa: Missão Nutrição →</button>
+  </div>
+</div>
+
+<!-- ===== NUTRITION ===== -->
+<div id="page-nutri" class="page">
+  <div class="section-header">
+    <span class="s-icon">🍎</span>
+    <div><h1>Missão Nutrição!</h1><p>Arraste os alimentos saudáveis para o prato e ganhe pontos!</p></div>
+  </div>
+  <div class="card nutrition-game">
+    <p class="card-sub" style="text-align:center;margin-bottom:16px;">Arraste os alimentos para o prato dourado! ⬇️</p>
+    <div class="food-tray" id="foodTray"></div>
+    <div class="plate-drop" id="plateDrop">
+      <div class="plate-contents" id="plateContents">🍽️</div>
+    </div>
+    <div class="nutri-score">⭐ <span id="nutriScore">0</span> pontos</div>
+    <div id="nutriMsg" style="text-align:center;font-weight:700;font-size:1.05rem;min-height:28px;margin-top:8px;"></div>
+    <div style="text-align:center;margin-top:12px;">
+      <button class="btn btn-coral" onclick="resetNutri()">🔄 Reiniciar</button>
+    </div>
+  </div>
+  <div class="card" style="background:linear-gradient(135deg,#e8f5e9,#fff9c4);">
+    <div class="card-title">💡 Por que a nutrição é importante?</div>
+    <p class="card-sub">Na fibrose cística, o corpo precisa de mais calorias e nutrientes porque o muco espesso pode dificultar a digestão e a absorção dos alimentos, fazendo com que o organismo gaste mais energia do que o normal. Uma alimentação rica e balanceada dá energia para crescer forte e para os pulmões funcionarem bem!</p>
+  </div>
+  <div class="next-bar">
+    <button class="btn btn-next" onclick="goTo('meds')">💊 Próxima Etapa: Remédios →</button>
+  </div>
+</div>
+
+<!-- ===== MEDS ===== -->
+<div id="page-meds" class="page">
+  <div class="section-header">
+    <span class="s-icon">💊</span>
+    <div><h1>Hora dos Medicamentos</h1><p>Os remédios são aliados poderosos! Vamos aprender sobre eles?</p></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🔬 Para que servem os remédios?</div>
+    <div class="physio-steps">
+      <div class="physio-step" style="border-left-color:var(--purple);">
+        <span class="step-icon">🧬</span>
+        <div><h3>Moduladores do CFTR</h3><p>São remédios modernos que ajudam a proteína CFTR, aquela que está alterada na fibrose cística, a funcionar melhor, facilitando o transporte de sais nas células. É como se ajudassem a "melhorar o funcionamento" da proteína no corpo!</p></div>
+      </div>
+      <div class="physio-step" style="border-left-color:var(--sky);">
+        <span class="step-icon">💧</span>
+        <div><h3>Mucolíticos</h3><p>Ajudam a deixar o muco mais fininho e fácil de sair. Como se jogassem água em um barro seco para ele ficar mais mole!</p></div>
+      </div>
+      <div class="physio-step" style="border-left-color:var(--mint);">
+        <span class="step-icon">🛡️</span>
+        <div><h3>Antibióticos</h3><p>Combatem as bactérias que podem causar infecções nas vias respiratórias. Eles ajudam a proteger os pulmões e tratar essas infecções.</p></div>
+      </div>
+      <div class="physio-step" style="border-left-color:var(--coral);">
+        <span class="step-icon">🍴</span>
+        <div><h3>Enzimas Pancreáticas</h3><p>Tomadas junto com as refeições, elas ajudam o corpo a "quebrar" os alimentos e aproveitar os nutrientes direitinho. Sem elas, o corpo não consegue aproveitar bem o que foi comido, e os nutrientes não são absorvidos de forma correta.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">❓ Quiz dos Remédios</div>
+    <div id="medsQuiz"></div>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="btn btn-primary" onclick="checkMedsQuiz()">✅ Ver Resultado</button>
+    </div>
+  </div>
+  <div class="next-bar">
+    <button class="btn btn-next" onclick="goTo('germs')">🦠 Próxima Etapa: Batalha contra Germes →</button>
+  </div>
+</div>
+
+<!-- ===== GERMS ===== -->
+<div id="page-germs" class="page">
+  <div class="section-header">
+    <span class="s-icon">🦠</span>
+    <div><h1>Batalha contra os Germes!</h1><p>Clique em cada ação para ganhar escudos de proteção!</p></div>
+  </div>
+  <div class="card">
+    <div class="germ-grid" id="germGrid"></div>
+    <div style="text-align:center;margin-top:20px;">
+      <div style="font-family:var(--font-head);font-size:1.5rem;color:var(--dark);">🛡️ Escudos conquistados: <span id="shieldCount" style="color:var(--purple);">0</span>/6</div>
+    </div>
+  </div>
+  <div class="card" style="background:linear-gradient(135deg,#e3f2fd,#e8f5e9);">
+    <div class="card-title">🦠 Por que se proteger é tão importante?</div>
+    <p class="card-sub">Para quem tem fibrose cística, as infecções pulmonares são ainda mais perigosas, pois o muco espesso é um ótimo lugar para bactérias se multiplicarem. Higiene é escudo! Cada ação de proteção conta muito.</p>
+  </div>
+  <div class="next-bar">
+    <button class="btn btn-next" onclick="goTo('achieve')">🏆 Próxima Etapa: Conquistas →</button>
+  </div>
+</div>
+
+<!-- ===== ACHIEVEMENTS ===== -->
+<div id="page-achieve" class="page">
+  <div class="section-header">
+    <span class="s-icon">🏆</span>
+    <div><h1>Suas Conquistas</h1><p>Explore o site para desbloquear todos os badges!</p></div>
+  </div>
+  <div class="achievements-grid" id="achieveGrid"></div>
+  <div class="next-bar">
+    <button class="btn btn-next" onclick="goTo('quiz')">❓ Próxima Etapa: Quiz Final →</button>
+  </div>
+</div>
+
+<!-- ===== FINAL QUIZ ===== -->
+<div id="page-quiz" class="page">
+  <div class="section-header">
+    <span class="s-icon">❓</span>
+    <div><h1>Quiz Final do Guardião!</h1><p>Prove que você aprendeu tudo sobre os pulmões mágicos!</p></div>
+  </div>
+  <div id="finalQuizWrap"></div>
+  <div class="next-bar">
+    <button class="btn btn-purple" onclick="submitFinalQuiz()">🏆 Ver Resultado!</button>
+  </div>
+  <div id="certSection" style="display:none;margin-top:24px;">
+    <div class="certificate" id="certOnly">
+      <span class="cert-seal">🏅</span>
+      <h2>Certificado dos Pulmões Mágicos</h2>
+      <div class="cert-seal" style="font-size:2.5rem;">🫁✨🫁</div>
+      <div class="card-title" style="font-size:1.3rem;color:#555;">Este certificado é concedido a</div>
+      <div class="cert-name" id="certNameDisplay">Herói Anônimo</div>
+      <p>Por completar com sucesso a Aventura dos Pulmões Mágicos, você se tornou um verdadeiro Guardião dos Pulmões! Você aprendeu sobre fibrose cística, fisioterapia respiratória, nutrição e como se proteger dos germes.</p>
+      <div style="margin-top:16px;font-size:0.85rem;color:#888;">Data: <span id="certDate"></span></div>
+      <div class="cert-footer">Tecnologia educacional desenvolvida para fins acadêmicos</div>
+    </div>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="btn btn-primary" onclick="printCert()">🖨️ Imprimir Certificado</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== UTILS =====
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+// ===== STATE =====
+const state={
+  name:'',avatar:{skin:'🧒',hair:'👑',cloth:'🦺'},
+  visited:new Set(),
+  achievements:{lungs:false,physio:false,nutrition:false,germs:false,quiz:false,game:false},
+  germsDone:0,nutriScore:0
+};
+
+// ===== NAV =====
+function goTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav .nav-links button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const nb=document.getElementById('nav-'+page);if(nb)nb.classList.add('active');
+  state.visited.add(page);updateProgress();window.scrollTo(0,0);
+}
+function updateProgress(){document.getElementById('progressBar').style.width=Math.round((state.visited.size/9)*100)+'%';}
+
+// ===== AVATAR =====
+function setAv(type,idx,emoji){
+  state.avatar[type]=emoji;
+  document.getElementById('av'+type.charAt(0).toUpperCase()+type.slice(1)).textContent=emoji;
+  document.querySelectorAll('#'+type+'Opts button').forEach((b,i)=>b.classList.toggle('sel',i===idx));
+}
+function startAdventure(){
+  state.name=document.getElementById('heroName').value.trim()||'Herói';
+  showToast('🚀 Bem-vindo(a), '+state.name+'! Boa aventura!');
+  setTimeout(()=>goTo('lungs'),800);
+}
+
+// ===== LUNGS FACTS =====
+const facts={
+  lung:    {emoji:'🫁',title:'Os Pulmões',      text:'Os pulmões ajudam você a pegar oxigênio para correr, brincar e estudar. Temos dois pulmões e, juntos, cabem cerca de 6 litros de ar! Eles funcionam como um balão que enche e esvazia o tempo todo.'},
+  muco:    {emoji:'💧',title:'O Muco',           text:'Todo mundo tem muco, ele protege o nariz, a garganta e os brônquios. Na fibrose cística ele fica mais grosso e difícil de sair, por isso precisamos ajudar os pulmões a se limparem!'},
+  bronquio:{emoji:'🌿',title:'Os Brônquios',     text:'Os brônquios são como árvores dentro dos pulmões! Eles levam o ar para todos os cantinhos. Na fibrose cística, o muco pode entupir esses caminhos, por isso a fisioterapia é tão importante.'},
+  oxigenio:{emoji:'💨',title:'O Oxigênio',       text:'O oxigênio é o combustível do seu corpo! Você inspira ar, os pulmões retiram o oxigênio e mandam para o sangue, que leva até cada célula. Sem ele, nada funciona!'},
+  fc:      {emoji:'⚠️',title:'Fibrose Cística',  text:'A fibrose cística é uma doença genética, ou seja, a pessoa já nasce com ela. Uma proteína chamada CFTR fica com defeito e faz o muco ficar grosso. Mas com cuidados e fisioterapia dá para viver muito bem!'},
+  cuidar:  {emoji:'💚',title:'Como Cuidar',      text:'Fisioterapia todos os dias, alimentação saudável, tomar os remédios certos, lavar bem as mãos e fazer exercícios físicos. Com esses cuidados, os pulmões ficam felizes e saudáveis!'}
+};
+function showFact(key){
+  const f=facts[key],box=document.getElementById('factBox');
+  box.innerHTML=`<span class="emoji">${f.emoji}</span><strong>${f.title}:</strong> ${f.text}`;
+  box.classList.add('visible');
+}
+
+// ===== MUCO CLICK GAME =====
+let mucoRunning=false,mucoTimer=null,mucoSpawner=null;
+let mucoScore=0,mucoCombo=0,mucoLastClick=0,mucoTimeLeft=25;
+const COLORS=['#b5e48c','#76c893','#52b69a','#34a0a4','#99d98c','#d9ed92'];
+
+function startMucoGame(){
+  if(mucoRunning)return;
+  mucoRunning=true;mucoScore=0;mucoCombo=1;mucoTimeLeft=25;mucoLastClick=0;
+  document.getElementById('mucoScore').textContent=0;
+  document.getElementById('mucoCombo').textContent='x1';
+  document.getElementById('mucoTimer').textContent=25;
+  document.getElementById('gameMsg').style.display='none';
+  document.getElementById('mucoArea').innerHTML='';
+  document.getElementById('btnMucoStart').textContent='⏸️ Em Jogo...';
+
+  mucoSpawner=setInterval(spawnMucoBall,Math.random()*500+300);
+  mucoTimer=setInterval(()=>{
+    mucoTimeLeft--;
+    document.getElementById('mucoTimer').textContent=mucoTimeLeft;
+    if(mucoTimeLeft<=0) endMucoGame();
+  },1000);
+}
+
+function spawnMucoBall(){
+  if(!mucoRunning)return;
+  const area=document.getElementById('mucoArea');
+  const size=30+Math.random()*30;
+  const x=Math.random()*(area.offsetWidth-size-10)+5;
+  const y=Math.random()*(area.offsetHeight-size-10)+5;
+  const ball=document.createElement('div');
+  ball.className='muco-ball';
+  ball.style.cssText=`width:${size}px;height:${size}px;left:${x}px;top:${y}px;background:${COLORS[Math.floor(Math.random()*COLORS.length)]};font-size:${size*0.5}px;`;
+  ball.textContent='🟢';
+  ball.addEventListener('click',()=>clickMucoBall(ball));
+  area.appendChild(ball);
+}
+
+function clickMucoBall(ball){
+  if(!mucoRunning)return;
+  const now=Date.now();
+  if(now-mucoLastClick<600) mucoCombo=Math.min(mucoCombo+1,5);
+  else mucoCombo=1;
+  mucoLastClick=now;
+  mucoScore+=mucoCombo;
+  document.getElementById('mucoScore').textContent=mucoScore;
+  document.getElementById('mucoCombo').textContent='x'+mucoCombo;
+  ball.style.transform='scale(0)';
+  ball.style.opacity='0';
+  ball.style.transition='all 0.15s';
+  setTimeout(()=>ball.remove(),150);
+}
+
+function endMucoGame(){
+  clearInterval(mucoTimer);clearInterval(mucoSpawner);
+  mucoRunning=false;
+  document.getElementById('btnMucoStart').textContent='▶️ Iniciar Jogo';
+  const msg=document.getElementById('gameMsg');
+  msg.style.display='block';
+  let feedback='';
+  if(mucoScore>=30) feedback='🫁 Excelente! Seus pulmões estão limpos!';
+  else if(mucoScore>=15) feedback='💪 Muito bem! Você ajudou a respirar melhor!';
+  else feedback='😊 Boa tentativa! Pratique mais para limpar os pulmões!';
+  msg.innerHTML=`<div style="font-size:2.5rem">🎉</div><div class="card-title">Tempo Esgotado!</div><p class="card-sub">${feedback}<br><br>Você removeu <strong>${mucoScore}</strong> bolinhas de muco! 🫁</p>`;
+  unlockAchieve('game');
+}
+
+function resetMucoGame(){
+  clearInterval(mucoTimer);clearInterval(mucoSpawner);
+  mucoRunning=false;mucoScore=0;mucoCombo=1;mucoTimeLeft=25;
+  document.getElementById('mucoScore').textContent=0;
+  document.getElementById('mucoCombo').textContent='x1';
+  document.getElementById('mucoTimer').textContent=25;
+  document.getElementById('btnMucoStart').textContent='▶️ Iniciar Jogo';
+  document.getElementById('gameMsg').style.display='none';
+  document.getElementById('mucoArea').innerHTML='';
+}
+
+// ===== BREATHING =====
+let breathPhase=true;
+setInterval(()=>{breathPhase=!breathPhase;document.getElementById('breathLabel').textContent=breathPhase?'Inspire... ↑':'Expire... ↓';},3000);
+function breathFeedback(){document.getElementById('breathFB').textContent='✨ Muito bem! Continue respirando profundamente!';setTimeout(()=>{document.getElementById('breathFB').textContent='';},2500);}
+
+// ===== NUTRITION =====
+const foods=[
+  {e:'🍎',good:true,name:'Maçã'},{e:'🥦',good:true,name:'Brócolis'},
+  {e:'🍗',good:true,name:'Frango'},{e:'🥚',good:true,name:'Ovo'},
+  {e:'🍠',good:true,name:'Batata-doce'},{e:'🥛',good:true,name:'Leite'},
+  {e:'🍕',good:false,name:'Pizza'},{e:'🍬',good:false,name:'Bala'},
+  {e:'🥤',good:false,name:'Refrigerante'},{e:'🍩',good:false,name:'Donuts'},
+];
+function initNutri(){
+  const tray=document.getElementById('foodTray');tray.innerHTML='';
+  shuffle(foods).forEach(f=>{
+    const el=document.createElement('div');
+    el.className='food-item';el.textContent=f.e;el.title=f.name;
+    el.draggable=true;
+    el.addEventListener('dragstart',e=>{e.dataTransfer.setData('text',JSON.stringify(f));el.classList.add('dragging');});
+    el.addEventListener('dragend',()=>el.classList.remove('dragging'));
+    tray.appendChild(el);
+  });
+  const plate=document.getElementById('plateDrop');
+  plate.addEventListener('dragover',e=>{e.preventDefault();plate.classList.add('drag-over');});
+  plate.addEventListener('dragleave',()=>plate.classList.remove('drag-over'));
+  plate.addEventListener('drop',e=>{
+    e.preventDefault();plate.classList.remove('drag-over');
+    const food=JSON.parse(e.dataTransfer.getData('text'));
+    const dragging=document.querySelector('.dragging');if(dragging)dragging.remove();
+    const contents=document.getElementById('plateContents');
+    if(contents.textContent==='🍽️')contents.textContent='';
+    const span=document.createElement('span');span.textContent=food.e;contents.appendChild(span);
+    const msg=document.getElementById('nutriMsg');
+    if(food.good){
+      state.nutriScore+=10;document.getElementById('nutriScore').textContent=state.nutriScore;
+      msg.textContent='✅ Muito bem! '+food.name+' dá energia para crescer forte!';msg.style.color='var(--mint)';
+      if(state.nutriScore>=50)unlockAchieve('nutrition');
+    } else {
+      state.nutriScore=Math.max(0,state.nutriScore-5);
+      document.getElementById('nutriScore').textContent=state.nutriScore;
+      msg.textContent='⚠️ '+food.name+' não é tão saudável! Você perdeu 5 pontos!';msg.style.color='var(--coral)';
+    }
+  });
+}
+function resetNutri(){state.nutriScore=0;document.getElementById('nutriScore').textContent=0;document.getElementById('nutriMsg').textContent='';document.getElementById('plateContents').textContent='🍽️';initNutri();}
+
+// ===== MEDS QUIZ — cada resposta correta em posição diferente =====
+// Posições corretas definidas manualmente para garantir distribuição: 0, 1, 2
+const medsQsRaw=[
+  {q:'O remédio ajuda a...', correctText:'Ajudar o corpo a funcionar melhor', wrongTexts:['Fazer o corpo ficar cansado','Deixar o muco mais grosso'], correctPos:0},
+  {q:'Quando devemos tomar os remédios?', correctText:'Todos os dias, como indicado pelo médico', wrongTexts:['Só quando nos sentimos mal','Só nos finais de semana'], correctPos:1},
+  {q:'As enzimas pancreáticas devem ser tomadas...', correctText:'Junto com as refeições', wrongTexts:['Antes de dormir','Só de manhã'], correctPos:2},
+];
+let medsQs=[];
+function buildMedsQs(){
+  medsQs=medsQsRaw.map(raw=>{
+    const wrongs=[...raw.wrongTexts];
+    const opts=[];
+    // insert correct at defined position, wrongs fill the rest
+    for(let i=0;i<3;i++){
+      if(i===raw.correctPos) opts.push(raw.correctText);
+      else opts.push(wrongs.shift());
+    }
+    return {q:raw.q,opts,correct:raw.correctPos};
+  });
+}
+let medsSelected={};
+function initMedsQuiz(){
+  buildMedsQs();medsSelected={};
+  const wrap=document.getElementById('medsQuiz');
+  wrap.innerHTML=medsQs.map((q,qi)=>`
+    <div class="quiz-q">
+      <h3>${qi+1}. ${q.q}</h3>
+      <div class="quiz-options">
+        ${q.opts.map((o,oi)=>`<button class="quiz-option" id="mq-${qi}-${oi}" onclick="selectMed(${qi},${oi})">${o}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="mfb-${qi}"></div>
+    </div>`).join('');
+}
+function selectMed(qi,oi){
+  medsSelected[qi]=oi;
+  document.querySelectorAll(`[id^="mq-${qi}-"]`).forEach(b=>b.style.borderColor='');
+  document.getElementById(`mq-${qi}-${oi}`).style.borderColor='var(--purple)';
+}
+function checkMedsQuiz(){
+  let ok=0;
+  medsQs.forEach((q,qi)=>{
+    const sel=medsSelected[qi];const fb=document.getElementById(`mfb-${qi}`);fb.classList.add('show');
+    if(sel===undefined){fb.textContent='⚠️ Selecione uma resposta!';fb.className='quiz-feedback show err';return;}
+    document.querySelectorAll(`[id^="mq-${qi}-"]`).forEach((b,i)=>{b.classList.remove('correct','wrong');if(i===q.correct)b.classList.add('correct');else if(i===sel)b.classList.add('wrong');});
+    if(sel===q.correct){ok++;fb.textContent='✅ Correto! Muito bem!';fb.className='quiz-feedback show ok';}
+    else{fb.textContent='❌ Não era essa. Veja a resposta em verde!';fb.className='quiz-feedback show err';}
+  });
+  if(ok===medsQs.length)showToast('🏆 Quiz perfeito! Você sabe tudo sobre remédios!');
+}
+
+// ===== GERMS =====
+const germActions=[
+  {icon:'🧼',title:'Lavar as mãos',desc:'Por 20 segundos com sabão, antes de comer e após o banheiro.'},
+  {icon:'🧴',title:'Álcool em Gel',desc:'Quando não tiver água e sabão por perto, o álcool gel é seu aliado!'},
+  {icon:'🤧',title:'Cobrir a boca ao tossir',desc:'Use o cotovelo, não as mãos, para não espalhar germes.'},
+  {icon:'😷',title:'Usar máscara quando doente',desc:'Protege você e as pessoas ao redor de vírus e bactérias.'},
+  {icon:'🏠',title:'Ambientes ventilados',desc:'Ar fresco renova o ambiente e diminui a concentração de germes.'},
+  {icon:'🦷',title:'Higiene bucal',desc:'Escovação e fio dental evitam bactérias que podem ir para os pulmões.'},
+];
+function initGerms(){
+  document.getElementById('germGrid').innerHTML=germActions.map((g,i)=>`
+    <div class="germ-card" id="gc-${i}" onclick="collectShield(${i})">
+      <span class="germ-icon">${g.icon}</span><span class="shield">🛡️</span>
+      <p>${g.title}</p>
+      <small style="color:#777;font-size:0.8rem;margin-top:6px;display:block;">${g.desc}</small>
+    </div>`).join('');
+}
+function collectShield(i){
+  const card=document.getElementById('gc-'+i);if(card.classList.contains('done'))return;
+  card.classList.add('done');state.germsDone++;document.getElementById('shieldCount').textContent=state.germsDone;
+  showToast('🛡️ Escudo coletado!');
+  if(state.germsDone>=6){unlockAchieve('germs');showToast('🏆 Todos os escudos coletados! Incrível!');}
+}
+
+// ===== ACHIEVEMENTS =====
+const achieveDefs=[
+  {id:'lungs',badge:'🫁',title:'Herói dos Pulmões',desc:'Explorou a página dos Pulmões'},
+  {id:'game',badge:'🎮',title:'Limpador de Pulmões',desc:'Completou a Missão Limpar os Pulmões'},
+  {id:'physio',badge:'💨',title:'Mestre da Respiração',desc:'Aprendeu fisioterapia respiratória'},
+  {id:'nutrition',badge:'🥗',title:'Super Nutricionista',desc:'Coletou 50+ pontos na Nutrição'},
+  {id:'germs',badge:'🦠',title:'Caçador de Germes',desc:'Coletou todos os escudos'},
+  {id:'quiz',badge:'🏆',title:'Guardião dos Pulmões',desc:'Completou o Quiz Final'},
+];
+function initAchievements(){
+  document.getElementById('achieveGrid').innerHTML=achieveDefs.map(a=>`
+    <div class="achieve-card ${state.achievements[a.id]?'unlocked':''}" id="ac-${a.id}">
+      <span class="badge">${a.badge}</span><h3>${a.title}</h3><p>${a.desc}</p>
+      ${state.achievements[a.id]?'<p style="color:var(--mint);font-weight:700;margin-top:8px;">✅ Desbloqueado!</p>':'<p style="color:#aaa;margin-top:8px;">🔒 Bloqueado</p>'}
+    </div>`).join('');
+}
+function unlockAchieve(id){
+  if(state.achievements[id])return;state.achievements[id]=true;
+  const def=achieveDefs.find(a=>a.id===id);if(def)showToast('🏆 Conquista: '+def.title+'!');
+  initAchievements();
+}
+
+// ===== FINAL QUIZ — embaralhado =====
+const finalQsRaw=[
+  {q:'Por que fazemos fisioterapia respiratória?',correctText:'Para ajudar a eliminar o muco dos pulmões',wrongTexts:['Para crescer mais alto','Para dormir melhor']},
+  {q:'Por que tomar os medicamentos todos os dias?',correctText:'Para o corpo funcionar melhor com a fibrose cística',wrongTexts:['Para ficar mais forte nos esportes','Para não sentir fome']},
+  {q:'Por que lavar as mãos é importante?',correctText:'Para eliminar germes que podem causar infecções',wrongTexts:['Para as mãos ficarem cheirosas','Para economizar água']},
+  {q:'O que é a fibrose cística?',correctText:'Uma doença genética que deixa o muco mais espesso',wrongTexts:['Uma doença causada por comer doces','Uma infecção por vírus']},
+  {q:'Qual destes alimentos é mais saudável para quem tem FC?',correctText:'🥦 Brócolis com frango',wrongTexts:['🍩 Donuts','🥤 Refrigerante']},
+];
+let finalQs=[],finalAnswers={};
+function buildFinalQs(){
+  finalQs=finalQsRaw.map(raw=>{
+    const opts=shuffle([raw.correctText,...raw.wrongTexts]);
+    return {q:raw.q,opts,ans:opts.indexOf(raw.correctText)};
+  });
+}
+function initFinalQuiz(){
+  buildFinalQs();finalAnswers={};
+  const wrap=document.getElementById('finalQuizWrap');
+  wrap.innerHTML=finalQs.map((q,qi)=>`
+    <div class="final-q">
+      <h3>${qi+1}. ${q.q}</h3>
+      ${q.opts.map((o,oi)=>`
+        <label class="final-opt" id="fopt-${qi}-${oi}">
+          <input type="radio" name="fq-${qi}" value="${oi}" onchange="finalSelect(${qi},${oi})"> ${o}
+        </label>`).join('')}
+    </div>`).join('');
+}
+function finalSelect(qi,oi){finalAnswers[qi]=oi;}
+function submitFinalQuiz(){
+  let correct=0;
+  finalQs.forEach((q,qi)=>{
+    const sel=finalAnswers[qi];
+    for(let oi=0;oi<q.opts.length;oi++){
+      const el=document.getElementById(`fopt-${qi}-${oi}`);
+      el.classList.remove('correct','wrong');
+      if(oi===q.ans)el.classList.add('correct');
+      else if(oi===sel&&sel!==q.ans)el.classList.add('wrong');
+    }
+    if(sel===q.ans)correct++;
+  });
+  if(Math.round(correct/finalQs.length*100)>=60){
+    unlockAchieve('quiz');
+    const certSec=document.getElementById('certSection');certSec.style.display='block';
+    document.getElementById('certNameDisplay').textContent=state.name||'Herói';
+    document.getElementById('certDate').textContent=new Date().toLocaleDateString('pt-BR');
+    showToast('🎉 Você se tornou um Guardião dos Pulmões! '+correct+'/'+finalQs.length+' corretas!');
+    certSec.scrollIntoView({behavior:'smooth'});
+  } else {
+    showToast('💪 Você acertou '+correct+'/'+finalQs.length+'. Revise o conteúdo e tente novamente!');
+  }
+}
+
+// ===== PRINT ONLY CERT =====
+function printCert(){
+  const cert=document.getElementById('certOnly');
+  const w=window.open('','_blank','width=800,height=600');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Nunito',sans-serif;margin:0;padding:40px;background:linear-gradient(135deg,#fff9c4,#e8f5e9,#e3f2fd);}
+    .certificate{background:linear-gradient(135deg,#fff9c4,#e8f5e9,#e3f2fd);border:6px double #F9D423;border-radius:24px;padding:40px 32px;text-align:center;position:relative;}
+    .certificate::before{content:'🌟⭐🌟⭐🌟⭐🌟⭐🌟⭐🌟';position:absolute;top:12px;left:0;right:0;font-size:1.2rem;opacity:0.5;letter-spacing:4px;}
+    .certificate::after{content:'🌟⭐🌟⭐🌟⭐🌟⭐🌟⭐🌟';position:absolute;bottom:12px;left:0;right:0;font-size:1.2rem;opacity:0.5;letter-spacing:4px;}
+    h2{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#1e1b4b;margin-bottom:8px;}
+    .cert-name{font-family:'Fredoka One',cursive;font-size:2.6rem;color:#A855F7;margin:18px 0;padding:14px;border-top:4px solid #F9D423;border-bottom:4px solid #F9D423;}
+    p{font-size:1rem;color:#555;line-height:1.7;}
+    .cert-seal{font-size:4rem;margin:14px 0;display:block;}
+    .cert-footer{font-size:0.8rem;color:#999;margin-top:20px;font-style:italic;}
+  </style></head><body>
+  <div class="certificate">
+    <span class="cert-seal">🏅</span>
+    <h2>Certificado dos Pulmões Mágicos</h2>
+    <span class="cert-seal" style="font-size:2.5rem;">🫁✨🫁</span>
+    <p style="font-size:1.1rem;color:#555;">Este certificado é concedido a</p>
+    <div class="cert-name">${document.getElementById('certNameDisplay').textContent}</div>
+    <p>Por completar com sucesso a Aventura dos Pulmões Mágicos, você se tornou um verdadeiro Guardião dos Pulmões! Você aprendeu sobre fibrose cística, fisioterapia respiratória, nutrição e como se proteger dos germes.</p>
+    <p style="margin-top:16px;font-size:0.85rem;color:#888;">Data: ${document.getElementById('certDate').textContent}</p>
+    <div class="cert-footer">Tecnologia educacional desenvolvida para fins acadêmicos</div>
+  </div>
+  </body></html>`);
+  w.document.close();
+  w.onload=()=>{w.print();};
+}
+
+// ===== TOAST =====
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ===== INIT =====
+initNutri();initMedsQuiz();initGerms();initAchievements();initFinalQuiz();
+state.visited.add('home');updateProgress();
+</script>
+</body>
+</html>
